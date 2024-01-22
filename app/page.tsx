@@ -1,57 +1,45 @@
-import DeployButton from '../components/DeployButton'
-import AuthButton from '../components/AuthButton'
-import { createClient } from '@/utils/supabase/server'
-import ConnectSupabaseSteps from '@/components/ConnectSupabaseSteps'
-import SignUpUserSteps from '@/components/SignUpUserSteps'
-import Header from '@/components/Header'
-import { cookies } from 'next/headers'
+import Link from 'next/link';
 
 export default async function Index() {
-  const cookieStore = cookies()
-
-  const canInitSupabaseClient = () => {
-    // This function is just for the interactive tutorial.
-    // Feel free to remove it once you have Supabase connected.
-    try {
-      createClient(cookieStore)
-      return true
-    } catch (e) {
-      return false
-    }
-  }
-
-  const isSupabaseConnected = canInitSupabaseClient()
-
   return (
-    <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-        <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-          <DeployButton />
-          {isSupabaseConnected && <AuthButton />}
+    <main className='flex flex-1 justify-center items-center'>
+      <header className='hero min-h-screen bg-base-200'>
+        <div className='hero-content text-center'>
+          <div className='max-w-md'>
+            <h1 className='text-5xl font-bold'>Hello there</h1>
+            <p className='py-6'>
+              Welcome to <b>Supabase - NextJS</b> a simple learning project
+              utilizing{' '}
+              <Link
+                href='https://supabase.com/'
+                target='__blank'
+                className='underline underline-offset-4 decoration-primary'
+              >
+                Supabase
+              </Link>{' '}
+              &amp;{' '}
+              <Link
+                href='https://nextjs.org/'
+                target='__blank'
+                className='underline underline-offset-4 decoration-primary'
+              >
+                NextJS
+              </Link>
+            </p>
+            <div className='flex flex-col justify-center items-center xl:flex-row gap-4'>
+              <Link
+                href='/register'
+                className='btn btn-primary btn-outline w-full xl:w-1/2'
+              >
+                Register
+              </Link>
+              <Link href='/login' className='btn btn-primary w-full xl:w-1/2'>
+                Login
+              </Link>
+            </div>
+          </div>
         </div>
-      </nav>
-
-      <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
-        <Header />
-        <main className="flex-1 flex flex-col gap-6">
-          <h2 className="font-bold text-4xl mb-4">Next steps</h2>
-          {isSupabaseConnected ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-        </main>
-      </div>
-
-      <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
-        <p>
-          Powered by{' '}
-          <a
-            href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-            target="_blank"
-            className="font-bold hover:underline"
-            rel="noreferrer"
-          >
-            Supabase
-          </a>
-        </p>
-      </footer>
-    </div>
-  )
+      </header>
+    </main>
+  );
 }

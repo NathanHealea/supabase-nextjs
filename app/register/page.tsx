@@ -1,42 +1,40 @@
 import Link from 'next/link';
-import LoginContent from './components/LoginContent.component';
-import LoginForm from './components/LoginForm.component';
-import LoginButtons from './components/LoginSocialButtons.component';
-import { LoginStatus } from './Login.types';
+import RegisterContent from './components/RegisterContent.component';
+import RegisterForm from './components/RegisterForm.component';
+import { RegistrationStatus } from './Registration.types';
 
-export type LoginPageProps = {
+export type RegisterPageProps = {
   searchParams: {
     message?: string;
-    status?: LoginStatus;
+    status?: RegistrationStatus;
   };
 };
 
-const LoginPage = (props: LoginPageProps) => {
+const RegisterPage = (props: RegisterPageProps) => {
   const {
     searchParams: { message, status },
   } = props;
   return (
-    <main className='flex flex-1 justify-center items-center'>
+    <main className='flex flex-1 flex-col justify-center'>
       <header className='hero '>
         <div className='hero-content flex-col lg:flex-row-reverse gap-x-8'>
-          <LoginContent />
+          <RegisterContent />
           <div className='shrink-0 w-full max-w-sm flex flex-col justify-center gap-4'>
-            <div className='card shrink-0 shadow-2xl bg-base-100'>
+            <div className='card shadow-2xl bg-base-100'>
               <div className='card-body'>
-                <LoginForm />
-                <div className='divider'>OR</div>
-                <LoginButtons />
+                <RegisterForm />
               </div>
             </div>
             <Link
-              href='/register'
+              href='/login'
               className='text-center underline-offset-4 decoration-primary hover:underline'
             >
-              Dont have an account? Register today!
+              Log in to existing account.
             </Link>
           </div>
         </div>
       </header>
+
       <div className='absolute bottom-0 w-full p-4'>
         {message && status === 'ERROR' && (
           <div role='alert' className='alert alert-error '>
@@ -80,4 +78,4 @@ const LoginPage = (props: LoginPageProps) => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
