@@ -1,20 +1,15 @@
-import { createClient } from '@/utils/supabase/server';
-import { cookies, headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+'use client';
+import { useToast } from '@/contexts/toastContext/toastContext';
+import { createClient } from '@/utils/supabase/client';
 
 export interface RegisterFormProps {}
 
 const RegisterForm = (props: RegisterFormProps) => {
+  const toast = useToast();
   const handleRegisterFormAction = async (formData: FormData) => {
-    'use server';
-
-    const origin = headers().get('origin');
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-
-    console.log(email, password);
+    const supabase = createClient();
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -25,12 +20,10 @@ const RegisterForm = (props: RegisterFormProps) => {
     });
 
     if (error) {
-      return redirect(`/register?message=${error}&status=ERROR`);
+      toast.error(error.message);
+    } else {
+      toast.success('Check your email to continue sign in process');
     }
-
-    return redirect(
-      '/register?message=Check email to continue sign in process&status=SUCCESS'
-    );
   };
 
   return (
