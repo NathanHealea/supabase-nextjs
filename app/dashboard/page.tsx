@@ -1,3 +1,4 @@
+import ProtectedRoute from '@/components/ProtectedRoute.component';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import Image from 'next/image';
@@ -14,15 +15,33 @@ const DashboardPage = async (props: DashboardPageProps) => {
   } = await supabase.auth.getSession();
 
   if (!session) {
+    console.log('Session does not exists');
     redirect('/login');
   }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', session.user.id);
+
+  if (error) {
+    console.log(error);
+    redirect('/404');
+  }
+
+  if (data.length != 1) {
+    console.error('data was not retrieved');
+  }
+
+  const profile = data[0];
+
   return (
     <main className='flex flex-1 justify-center items-center'>
       <header className='hero '>
         <div className='hero-content flex-col lg:flex-row-reverse gap-x-8'>
           <div className='text-center lg:text-left'>
             <h1 className='text-5xl font-bold'>
-              Welcome {session.user.email}!
+              Welcome {profile.display_name || session.user.email}!
             </h1>
             <p className='py-6 leading-7'>
               You have successfully registered and/or logged in to an account on{' '}

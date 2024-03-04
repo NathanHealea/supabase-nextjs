@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export type RegisterFormProps = {};
+export interface RegisterFormProps {}
 
 const RegisterForm = (props: RegisterFormProps) => {
   const handleRegisterFormAction = async (formData: FormData) => {

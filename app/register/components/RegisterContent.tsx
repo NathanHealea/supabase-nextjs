@@ -1,4 +1,4 @@
-export type RegisterContentProps = {};
+export interface RegisterContentProps {}
 
 const RegisterContent = (props: RegisterContentProps) => {
   return (

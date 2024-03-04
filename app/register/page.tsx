@@ -1,14 +1,14 @@
 import Link from 'next/link';
-import RegisterContent from './components/RegisterContent.component';
-import RegisterForm from './components/RegisterForm.component';
+import RegisterContent from './components/RegisterContent';
+import RegisterForm from './components/RegisterForm';
 import { RegistrationStatus } from './Registration.types';
 
-export type RegisterPageProps = {
+export interface RegisterPageProps {
   searchParams: {
     message?: string;
     status?: RegistrationStatus;
   };
-};
+}
 
 const RegisterPage = (props: RegisterPageProps) => {
   const {

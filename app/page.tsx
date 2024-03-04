@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export default async function Index() {
+const Index = () => {
   return (
     <main className='flex flex-1 justify-center items-center'>
       <header className='hero min-h-screen bg-base-200'>
@@ -42,4 +42,4 @@ export default async function Index() {
       </header>
     </main>
   );
-}
+};

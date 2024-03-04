@@ -2,6 +2,8 @@ import Navigation from '@/components/layout/Navigation';
 import '../styles/globals.css';
 import UserLinks from '@/components/UserLinks.component';
 import { baseurl, sitename } from '@/app.config';
+import { ToastContextProvider } from '@/contexts/toastContext/toastContext';
+import { ReactNode } from 'react';
 
 // const defaultUrl = process.env.VERCEL_URL
 //   ? `https://${process.env.VERCEL_URL}`
@@ -13,19 +15,24 @@ export const metadata = {
   description: 'Learning how to integrate supabase with nextjs',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+const RootLayout = (props: RootLayoutProps) => {
+  const { children } = props;
   return (
     <html lang='en'>
       <body className='flex flex-col flex-1 min-h-screen'>
-        <Navigation>
-          <UserLinks />
-        </Navigation>
-        {children}
+        <ToastContextProvider>
+          <Navigation>
+            <UserLinks />
+          </Navigation>
+          {children}
+        </ToastContextProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
