@@ -18,22 +18,40 @@ const ProfilePage = async (props: ProfilePageProps) => {
     redirect('/login');
   }
 
-  const { data, error } = await supabase
+  let errors: Array<string> = [];
+
+  const { data: dataProfile, error: errorProfile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', session?.user.id);
 
-  if (error) {
-    console.error(error);
+  if (errorProfile) {
+    errors.push(errorProfile.message);
+  }
+
+  const { data: dataAvatar, error: errorAvatar } = await supabase.storage
+    .from('avatars')
+    .download(`${session?.user.id}/public/avatar.png`);
+
+  if (errorAvatar) {
+    errors.push(errorAvatar.message);
+  }
+
+  if (errors.length > 0) {
+    console.error(errors);
     redirect('/404');
   }
 
-  if (data.length != 1) {
-    console.log(`ERROR: data was not retrieved. ${data.length}`);
+  if (dataProfile == null || dataProfile.length != 1) {
+    console.log(`ERROR: Profile data was not retrieved. ${dataProfile}`);
   }
 
-  const profile = data[0];
+  if (dataAvatar == null || dataAvatar.length != 1) {
+    console.log(`ERROR: Profile avatar was not retrieved. ${dataAvatar}`);
+  }
 
+  let profile = dataProfile[0];
+  let avatar = (dataAvatar && new File([dataAvatar], 'avatar.png')) || null;
   return (
     <main className='flex flex-col flex-1 gap-8 items-center'>
       <header className='hero py-16'>
@@ -53,6 +71,7 @@ const ProfilePage = async (props: ProfilePageProps) => {
                 firstName: profile.first_name,
                 lastName: profile.last_name,
                 dateOfBirth: profile.date_of_birth,
+                avatar: avatar,
               }}
               userId={session.user.id}
             />

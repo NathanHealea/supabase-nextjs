@@ -4,18 +4,26 @@ import { useToast } from '@/contexts/toastContext/toastContext';
 import { createClient } from '@/utils/supabase/client';
 import clsx from 'clsx';
 import React, { FormEvent, useState } from 'react';
+import { ProfileImageInput } from './AvatarInput';
 
 export interface ProfileFormData {
   displayName?: string;
   firstName?: string;
   lastName?: string;
   dateOfBirth?: string;
+  avatar?: File | null;
 }
 
 export interface ProfileFormProps {
   initialData: ProfileFormData;
   userId: string;
 }
+
+const getFileExtension = (filename: string) => {
+  return filename.slice(
+    (Math.max(0, filename.lastIndexOf('.')) || Infinity) + 1
+  );
+};
 
 const ProfileForm = (props: ProfileFormProps) => {
   const { initialData, userId } = props;
@@ -26,14 +34,16 @@ const ProfileForm = (props: ProfileFormProps) => {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    let errors: Array<string> = [];
+
     setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
-    console.log(formData.values());
+    console.log(formData.get('avatar'));
 
     const supabase = createClient();
 
-    const { error } = await supabase
+    const { error: profileError } = await supabase
       .from('profiles')
       .update({
         display_name: formData.get('displayName'),
@@ -43,8 +53,28 @@ const ProfileForm = (props: ProfileFormProps) => {
       })
       .eq('id', userId);
 
-    if (error) {
-      toast.error(error.message);
+    if (profileError) {
+      errors.push(profileError.message);
+    }
+
+    const fileAvatar = formData.get('avatar') as File;
+
+    if (fileAvatar !== null) {
+      console.log(fileAvatar);
+      const { data: dataAvatar, error: errorAvatar } = await supabase.storage
+        .from('avatars')
+        .upload(
+          `${userId}/public/avatar.${getFileExtension(fileAvatar.name)}`,
+          fileAvatar
+        );
+
+      if (errorAvatar) {
+        errors.push(errorAvatar.message);
+      }
+    }
+
+    if (profileError) {
+      toast.error(errors.join(','));
     } else {
       toast.success('Profile was saved.');
     }
@@ -55,7 +85,12 @@ const ProfileForm = (props: ProfileFormProps) => {
   return (
     <form className='flex flex-col gap-8 items-center' onSubmit={onSubmit}>
       {/* Profile Picture */}
-      <div className='skeleton w-32 h-32'></div>
+      <label
+        className='form-control w-full max-w-xs flex justify-center items-center'
+        htmlFor='avatar'
+      >
+        <ProfileImageInput id='avatar' name='avatar' />
+      </label>
 
       {/* Display Name */}
       <label className='form-control w-full max-w-xs' htmlFor='displayName'>
